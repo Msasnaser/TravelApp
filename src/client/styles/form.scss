@@ -1,5 +1,3 @@
-// Variables for colors and sizes
-$overlay-bg-color: rgba(0, 0, 0, 0.7);
 $form-bg-color: white;
 $button-bg-color: #ff445b;
 $button-hover-bg-color: #ff445aab;
@@ -8,7 +6,6 @@ $text-color: #121430;
 $border-radius: 8px;
 $padding: 70px;
 $heading-color: #333;
-// Overlay and Form
 .overlay {
     display: none; // Hidden by default
     position: fixed;
@@ -16,12 +13,12 @@ $heading-color: #333;
     left: 0;
     width: 100%;
     height: 100%;
-    background: $overlay-bg-color;
+    background: rgba(0, 0, 0, 0.7);
     align-items: center;
     justify-content: center;
   
     .form-container {
-      background: $form-bg-color;
+      background: white !important;
       border-radius: 8px;
       padding: $padding;
       position: relative;

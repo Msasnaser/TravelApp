@@ -21,16 +21,11 @@ export async function WeatherData(lat, lng) {
       }&key=${Client.apiConfig.weatherbit.apiKey}`
     );
     const data = await response.text();
-    // console.log(Client.daysRemaining)
     const dataObject = JSON.parse(data);
 
-    // Access the first object in the 'data' array
     const resObject = dataObject.data[Client.daysRemaining];
-    // console.log(resObject);
     let { low_temp, high_temp } = resObject;
     let { description } = resObject.weather;
-    // console.log(high_temp,low_temp,description)
-    //should be sent to backend and display it as upcoming trip
     let weather = {
       high: high_temp,
       low: low_temp,

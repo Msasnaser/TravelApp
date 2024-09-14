@@ -1,11 +1,9 @@
-// Function to display trip data
 import Swal from "sweetalert2";
 
 export function showSpinner() {
   document.getElementById('spinner').style.display = 'block';
 }
 
-// Function to hide the spinner
 export function hideSpinner() {
   document.getElementById('spinner').style.display = 'none';
 }
@@ -14,21 +12,17 @@ export function displayTripData() {
   const upcomingscontainer = document.getElementById('upcoming-container');
   const oldscontainer = document.getElementById('old-container');
   
-  // Initialize empty state messages
   let hasTodayTrips = false;
   let hasUpcomingTrips = false;
   let hasOldTrips = false;
   
-  // Retrieve trip data from local storage
   const tripArray = JSON.parse(localStorage.getItem('tripData')) || [];
   const currentDate = new Date();
   
-  // Clear existing content
   todayscontainer.innerHTML = '';
   upcomingscontainer.innerHTML = '';
   oldscontainer.innerHTML = '';
   
-  // Helper function to format trip cards
   function createTripCard(data, category) {
     const depart = new Date(data.depart);
     let weatherInfo = '';
@@ -59,7 +53,6 @@ export function displayTripData() {
     `;
   }
   
-  // Populate containers
   tripArray.forEach(data => {
     const depart = new Date(data.depart);
     const isToday = depart.toDateString() === currentDate.toDateString();
@@ -77,7 +70,6 @@ export function displayTripData() {
     }
   });
   
-  // Show messages if no trips in a category
   if (!hasTodayTrips) {
     todayscontainer.innerHTML = 'Currently, there are no today trips to display.';
   }
@@ -88,13 +80,11 @@ export function displayTripData() {
     oldscontainer.innerHTML = 'Currently, there are no old trips to display.';
   }
 
-  // Attach delete button event listeners
   document.querySelectorAll('.delete').forEach(button => {
     button.addEventListener('click', (event) => {
       const tripCard = event.target.closest('.trip-card');
       const id = tripCard.dataset.id;
 
-      // Show confirmation alert
       Swal.fire({
         title: 'Are you sure?',
         text: 'This trip will be removed from your list.',
@@ -104,9 +94,9 @@ export function displayTripData() {
         cancelButtonText: 'No, cancel!',
       }).then((result) => {
         if (result.isConfirmed) {
-          showSpinner(); // Show the spinner
+          showSpinner(); 
 
-          setTimeout(() => { // Simulate network delay
+          setTimeout(() => { 
             let tripArray = JSON.parse(localStorage.getItem('tripData')) || [];
             tripArray = tripArray.filter(trip => trip.id !== Number(id));
             localStorage.setItem('tripData', JSON.stringify(tripArray));

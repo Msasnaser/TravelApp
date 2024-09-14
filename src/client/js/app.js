@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 
 const serverURL = "http://localhost:8081/api/getKeys";
 
-// تهيئة apiConfig بدون مفاتيح
+
 export let apiConfig = {
   geonames: {
     url: "",
@@ -18,7 +18,6 @@ export let apiConfig = {
   },
 };
 
-// جلب المفاتيح من الخادم لتعزيز الأمان
 export async function fetchKeys() {
   try {
     const response = await fetch(serverURL);

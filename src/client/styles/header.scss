@@ -1,5 +1,3 @@
-$primary-color: #ff445b;
-$hover-color: #ff445aae;
 $header-bg-color: #ffff;
 $text-color: #121430;
 
@@ -33,14 +31,14 @@ header {
       &:hover,
       &.active {
         text-decoration: underline;
-       color:#ff445b;
+       color:#8325d0;
           
       }
     }
   }
 
   .add-trip  {
-    background-color: $primary-color;
+    background-color: #8325d0 ;
     border: none;
     color: $text-color;
     padding: 5px 10px;
@@ -56,7 +54,6 @@ header {
     }
 
     &:hover {
-      background-color: $hover-color;
-    }
-  }
+      background-color: #aa8bc6;
+  }}
 }

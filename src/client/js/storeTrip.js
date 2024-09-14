@@ -5,7 +5,7 @@ export async function saveTripToLocal(data) {
       const weather = await data.weather;
       const imageUrls = await data.ImageUrls;
       const tripData = {
-        id: Date.now(), // Unique identifier for each trip
+        id: Date.now(), 
         countryName: data.countryName,
         depart: depart.toISOString(), 
         weather: {
@@ -20,10 +20,8 @@ export async function saveTripToLocal(data) {
   
       let tripArray = JSON.parse(localStorage.getItem('tripData')) || [];
   
-      // Add new trip data to the array
       tripArray.push(tripData);
   
-      // Save updated array back to local storage
       localStorage.setItem('tripData', JSON.stringify(tripArray));
 
       Swal.fire({
