@@ -1,30 +1,30 @@
-const CACHE_NAME = 'travel-planner-cache-v1';
-const urlsToCache = [
+
+const CACHE_VERSION = 'v1-travel-cache';
+const assetsToCache = [
   '/',
   '/index.html',
-  '/styles.css', 
-  '/bundle.js', 
-  '/favicon.ico',
+  '/styles.css',
+  '/bundle.js',
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_VERSION)
       .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        console.log('Cache opened successfully');
+        return cache.addAll(assetsToCache);
       })
   );
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((cacheKeys) => {
       return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
+        cacheKeys.map((key) => {
+          if (key !== CACHE_VERSION) {
+            console.log('Removing outdated cache:', key);
+            return caches.delete(key);
           }
         })
       );
@@ -32,14 +32,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response; 
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-        return fetch(event.request); 
+        return fetch(e.request);
       })
   );
 });

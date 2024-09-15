@@ -1,37 +1,39 @@
+
+
 import express from 'express';
 import path from 'path';
-import url from 'url';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
 dotenv.config();
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const app = express();
-const port = process.env.PORT || 8081;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Middleware
+const app = express();
+const PORT = process.env.PORT || 8081;
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '../../dist')));
+app.use(express.static(path.resolve(__dirname, '../../dist')));
 
-app.get('/api/getKeys', (req, res) => {
-  const apiKeys = {
-    username: process.env.GEONAMES,
-    weatherKey: process.env.WEATHERBIT_API_KEY,
-    pixabayKey: process.env.PIXABAY_API_KEY,
+app.get('/api/keys', (req, res) => {
+  const keys = {
+    geonames: process.env.GEONAMES,
+    weatherbit: process.env.WEATHERBIT_API_KEY,
+    pixabay: process.env.PIXABAY_API_KEY,
   };
-  res.json(apiKeys);
+  res.json(keys);
 });
 
-// Serve the index.html file from the 'dist' directory
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
 });
 
-app.listen(port, () => {
-  console.log(`Server is listening on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
 
 export default app;

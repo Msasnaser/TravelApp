@@ -1,59 +1,62 @@
-$header-bg-color: #ffff;
+
+$header-background: #ffff;
 $text-color: #121430;
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: $header-bg-color;
-  color: $text-color;
-  padding: 10px 20px;
-  width: 80%;
-  margin: auto;
-
-  .logo {
-    font-size: 1.7em;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .navbar {
     display: flex;
-    gap: 20px;
-
-    .nav-item {
-      color: $text-color;
-      text-decoration: none;
-      font-size: 1em;
-      font-weight: 800;
-      text-transform: uppercase;
-
-      &:hover,
-      &.active {
-        text-decoration: underline;
-       color:#8325d0;
-          
-      }
-    }
-  }
-
-  .add-trip  {
-    background-color: #8325d0 ;
-    border: none;
-    color: $text-color;
-    padding: 5px 10px;
-    font-size: 1em;
-    cursor: pointer;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 5px;
-    font-weight: 600;
-    border-radius: 4px;
-    i {
-      font-size: 1.2em;
+    background-color: $header-background;
+    color: $text-color;
+    padding: 10px 20px;
+    width: 80%;
+    margin: auto;
+
+    .brand {
+        font-size: 1.7em;
+        font-weight: bold;
+        cursor: pointer;
     }
 
-    &:hover {
-      background-color: #aa8bc6;
-  }}
+    .nav-links {
+        display: flex;
+        padding: 10px;
+        gap: 20px;
+
+        .nav-link {
+            color: $text-color;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 800;
+            text-transform: uppercase;
+
+            &:hover,
+            &.active {
+                text-decoration: underline;
+                color: #8325d0;
+            }
+        }
+    }
+
+    .trip-add {
+        background-color: #8325d0;
+        border: none;
+        color: $text-color;
+        padding: 5px 10px;
+        font-size: 1em;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 600;
+        border-radius: 4px;
+
+        i {
+            font-size: 1.2em;
+        }
+
+        &:hover {
+            background-color: #aa8bc6;
+        }
+    }
 }

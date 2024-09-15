@@ -1,115 +1,118 @@
+
+
 import Swal from "sweetalert2";
 
-export function showSpinner() {
-  document.getElementById('spinner').style.display = 'block';
+export function showLoading() {
+  document.getElementById('loading-spinner').style.display = 'block';
 }
 
-export function hideSpinner() {
-  document.getElementById('spinner').style.display = 'none';
+export function hideLoading() {
+  document.getElementById('loading-spinner').style.display = 'none';
 }
-export function displayTripData() {
-  const todayscontainer = document.getElementById('today-container');
-  const upcomingscontainer = document.getElementById('upcoming-container');
-  const oldscontainer = document.getElementById('old-container');
-  
+
+export function renderTripCards() {
+  const todaySection = document.getElementById('current-section');
+  const upcomingSection = document.getElementById('future-section');
+  const pastSection = document.getElementById('historical-section');
+
   let hasTodayTrips = false;
   let hasUpcomingTrips = false;
-  let hasOldTrips = false;
-  
-  const tripArray = JSON.parse(localStorage.getItem('tripData')) || [];
-  const currentDate = new Date();
-  
-  todayscontainer.innerHTML = '';
-  upcomingscontainer.innerHTML = '';
-  oldscontainer.innerHTML = '';
-  
-  function createTripCard(data, category) {
-    const depart = new Date(data.depart);
-    let weatherInfo = '';
+  let hasPastTrips = false;
+
+  const tripsData = JSON.parse(localStorage.getItem('tripData')) || [];
+  const today = new Date();
+
+  todaySection.innerHTML = '';
+  upcomingSection.innerHTML = '';
+  pastSection.innerHTML = '';
+
+  function generateCard(trip, category) {
+    const departureDate = new Date(trip.depart);
+    let weatherDetails = '';
+
     if (category === 'today') {
-      weatherInfo = `
-        <p><strong>Temperature:</strong> ${data.weather.temp}°C</p>
-        <p><strong>Feels Like:</strong> ${data.weather.feelslike}°C</p>
+      weatherDetails = `
+        <p><strong>Temp:</strong> ${trip.weather.temp}°C</p>
+        <p><strong>Feels Like:</strong> ${trip.weather.feelslike}°C</p>
       `;
     } else if (category === 'upcoming') {
-      weatherInfo = `
-        <p><strong>High Temperature:</strong> ${data.weather.high}°C</p>
-        <p><strong>Low Temperature:</strong> ${data.weather.low}°C</p>
+      weatherDetails = `
+        <p><strong>Max Temp:</strong> ${trip.weather.high}°C</p>
+        <p><strong>Min Temp:</strong> ${trip.weather.low}°C</p>
       `;
     }
-    
+
     return `
-      <div class="trip-card ${category}" data-id="${data.id}">
-        <h2>My Trip to: ${data.countryName}</h2>
-        <p><strong>Departing:</strong> ${depart.toLocaleDateString()}</p>
-         <div class="images zoom">
-          ${data.imageUrls.map(url => `<img src="${url}" alt="Trip Image" class="zoom-image" />`).join('')}
+      <div class="trip-card ${category}" data-id="${trip.id}">
+        <h2>Journey to: ${trip.countryName}</h2>
+        <p><strong>Departure Date:</strong> ${departureDate.toLocaleDateString()}</p>
+        <div class="images zoom">
+          ${trip.imageUrls.map(img => `<img src="${img}" alt="Trip Image" class="zoom-image" />`).join('')}
         </div>
-        <p><strong>Weather Description:</strong> ${data.weather.desc}</p>
-        ${weatherInfo}
-       
-        <button type="button" class="delete">Remove Trip</button>
+        <p><strong>Weather Summary:</strong> ${trip.weather.desc}</p>
+        ${weatherDetails}
+        <button type="button" class="remove-trip-btn">Delete Trip</button>
       </div>
     `;
   }
-  
-  tripArray.forEach(data => {
-    const depart = new Date(data.depart);
-    const isToday = depart.toDateString() === currentDate.toDateString();
-    const isUpcoming = depart > currentDate;
-    
-    if (isToday) {
-      todayscontainer.innerHTML += createTripCard(data, 'today');
+
+  tripsData.forEach(trip => {
+    const departureDate = new Date(trip.depart);
+    const isTodayTrip = departureDate.toDateString() === today.toDateString();
+    const isUpcomingTrip = departureDate > today;
+
+    if (isTodayTrip) {
+      todaySection.innerHTML += generateCard(trip, 'today');
       hasTodayTrips = true;
-    } else if (isUpcoming) {
-      upcomingscontainer.innerHTML += createTripCard(data, 'upcoming');
+    } else if (isUpcomingTrip) {
+      upcomingSection.innerHTML += generateCard(trip, 'upcoming');
       hasUpcomingTrips = true;
     } else {
-      oldscontainer.innerHTML += createTripCard(data, 'old');
-      hasOldTrips = true;
+      pastSection.innerHTML += generateCard(trip, 'past');
+      hasPastTrips = true;
     }
   });
-  
+
   if (!hasTodayTrips) {
-    todayscontainer.innerHTML = 'Currently, there are no today trips to display.';
+    todaySection.innerHTML = 'No trips for today.';
   }
   if (!hasUpcomingTrips) {
-    upcomingscontainer.innerHTML = 'Currently, there are no upcoming trips to display.';
+    upcomingSection.innerHTML = 'No upcoming trips.';
   }
-  if (!hasOldTrips) {
-    oldscontainer.innerHTML = 'Currently, there are no old trips to display.';
+  if (!hasPastTrips) {
+    pastSection.innerHTML = 'No past trips.';
   }
 
-  document.querySelectorAll('.delete').forEach(button => {
-    button.addEventListener('click', (event) => {
-      const tripCard = event.target.closest('.trip-card');
-      const id = tripCard.dataset.id;
+  document.querySelectorAll('.remove-trip-btn').forEach(button => {
+    button.addEventListener('click', event => {
+      const tripElement = event.target.closest('.trip-card');
+      const tripId = tripElement.dataset.id;
 
       Swal.fire({
-        title: 'Are you sure?',
-        text: 'This trip will be removed from your list.',
+        title: 'Confirm Deletion',
+        text: 'Do you really want to remove this trip?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, remove it!',
-        cancelButtonText: 'No, cancel!',
-      }).then((result) => {
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then(result => {
         if (result.isConfirmed) {
-          showSpinner(); 
+          showLoading();
 
-          setTimeout(() => { 
-            let tripArray = JSON.parse(localStorage.getItem('tripData')) || [];
-            tripArray = tripArray.filter(trip => trip.id !== Number(id));
-            localStorage.setItem('tripData', JSON.stringify(tripArray));
+          setTimeout(() => {
+            let updatedTrips = JSON.parse(localStorage.getItem('tripData')) || [];
+            updatedTrips = updatedTrips.filter(trip => trip.id !== Number(tripId));
+            localStorage.setItem('tripData', JSON.stringify(updatedTrips));
 
-          Swal.fire(
-              'Removed!',
-              'Your trip has been removed.',
+            Swal.fire(
+              'Deleted!',
+              'The trip has been successfully removed.',
               'success'
             );
 
-            displayTripData();
-            hideSpinner(); 
-          }, 1000); 
+            renderTripCards();
+            hideLoading();
+          }, 1000);
         }
       });
     });

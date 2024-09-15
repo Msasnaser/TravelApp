@@ -1,52 +1,58 @@
-import Swal from "sweetalert2";
-
-const serverURL = "http://localhost:8081/api/getKeys";
 
 
-export let apiConfig = {
+import Swal from 'sweetalert2';
+const configUrl = 'http://localhost:8081/api/getKeys';
+
+export let apiEndpoints = {
   geonames: {
-    url: "",
-    username: "",
+    baseUrl: '',
+    userName: '',
   },
   weatherbit: {
-    url: "",
-    apiKey: "",
+    baseUrl: '',
+    apiToken: '',
   },
   pixabay: {
-    url: "",
-    apiKey: "",
+    baseUrl: '',
+    apiToken: '',
   },
 };
-
-export async function fetchKeys() {
+async function retrieveApiConfig() {
+  console.log('Inside retrieveApiConfig function');
   try {
-    const response = await fetch(serverURL);
-
+    const url = configUrl;
+    console.log('Fetching URL:', url);
+    const response = await fetch(url);
+    console.log('Received response:', response);
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error('Unable to fetch configuration from the server');
     }
-
-    const data = await response.json();
-    apiConfig = {
-      geonames: {
-        url: "https://secure.geonames.org/",
-        username: data.username,
-      },
-      weatherbit: {
-        url: "https://api.weatherbit.io/v2.0/",
-        apiKey: data.weatherKey,
-      },
-      pixabay: {
-        url: "https://pixabay.com/api/",
-        apiKey: data.pixabayKey,
-      },
-    };
+    const configData = await response.json();
+    console.log('Received API response:', configData);
+    updateApiEndpoints(configData);
+    console.log('Updated apiEndpoints:', apiEndpoints);
+    return apiEndpoints; 
   } catch (error) {
+    console.error('Error fetching API configuration:', error.message);
+    console.error('Error fetching API configuration:', error.stack);
     Swal.fire({
-      title: "Error!",
-      text: "Error fetching API configuration",
-      icon: "error",
-      confirmButtonText: "OK",
+      title: 'Error',
+      text: 'Could not load API configuration',
+      icon: 'error',
+      confirmButtonText: 'Close',
     });
+    return {}; 
   }
 }
+
+function updateApiEndpoints(config) {
+  apiEndpoints.geonames.baseUrl = 'https://secure.geonames.org/';
+  apiEndpoints.geonames.userName = config.username;
+
+  apiEndpoints.weatherbit.baseUrl = 'https://api.weatherbit.io/v2.0/';
+  apiEndpoints.weatherbit.apiToken = config.weatherKey;
+
+  apiEndpoints.pixabay.baseUrl = 'https://pixabay.com/api/';
+  apiEndpoints.pixabay.apiToken = config.pixabayKey;
+}
+export { retrieveApiConfig};

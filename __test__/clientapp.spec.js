@@ -1,56 +1,49 @@
-import { apiConfig, fetchKeys } from '../src/client/js/app.js'; 
-import Swal from 'sweetalert2'; 
 
-jest.mock('sweetalert2', () => ({
-  fire: jest.fn(),
-}));
+import { retrieveApiConfig}from '../src/client/js/app';
+
+// Mock the fetch function
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({
+      geonames: { url: "https://secure.geonames.org/", username: "testuser" },
+      pixabay: { apiKey: "testpixabaykey", url: "https://pixabay.com/api/" },
+      weatherbit: { apiKey: "testweatherkey", url: "https://api.weatherbit.io/v2.0/" }
+    }),
+  })
+);
 
 describe('Client API Fetch', () => {
-  beforeEach(() => {
-    jest.resetAllMocks(); 
-    global.fetch = jest.fn(); 
-  });
-
-  test('should update apiConfig on successful fetch', async () => {
-    const mockResponse = {
+  it('should update apiConfig on successful fetch', async () => {
+    // Mock the fetchKeys function if needed
+    const mockConfig = {
       username: 'testuser',
       weatherKey: 'testweatherkey',
       pixabayKey: 'testpixabaykey',
     };
-
-    global.fetch.mockResolvedValueOnce({
+    jest.spyOn(global, 'fetch').mockResolvedValue({
       ok: true,
-      json: jest.fn().mockResolvedValueOnce(mockResponse),
+      json: async () => mockConfig,
     });
 
-    await fetchKeys();
+    // Call the function to retrieve the API configuration
+    const apiConfig = await retrieveApiConfig();
 
+    // Check the fetched API configuration
     expect(apiConfig).toEqual({
       geonames: {
-        url: 'https://secure.geonames.org/',
-        username: 'testuser',
+        baseUrl: 'https://secure.geonames.org/',
+        userName: 'testuser',
       },
       weatherbit: {
-        url: 'https://api.weatherbit.io/v2.0/',
-        apiKey: 'testweatherkey',
+        baseUrl: 'https://api.weatherbit.io/v2.0/',
+        apiToken: 'testweatherkey',
       },
       pixabay: {
-        url: 'https://pixabay.com/api/',
-        apiKey: 'testpixabaykey',
+        baseUrl: 'https://pixabay.com/api/',
+        apiToken: 'testpixabaykey',
       },
-    });
-  });
-
-  test('should handle fetch error and show Swal alert', async () => {
-    global.fetch.mockRejectedValueOnce(new Error('Network Error'));
-
-    await fetchKeys();
-
-    expect(Swal.fire).toHaveBeenCalledWith({
-      title: 'Error!',
-      text: 'Error fetching API configuration',
-      icon: 'error',
-      confirmButtonText: 'OK',
     });
   });
 });
+

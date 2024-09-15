@@ -7,11 +7,11 @@ global.Client = {
       },
     },
     fetchKeys: jest.fn(),
-    GeonamesData: jest.fn(),
-    PixabayImage: jest.fn(),
-    WeatherData: jest.fn(),
+    fetchGeonamesData: jest.fn(),
+    fetchPixabayImages: jest.fn(),
+    fetchWeatherData: jest.fn(),
     daysRemaining: jest.fn(),
-    saveTripToLocal: jest.fn(),
-    displayTripData: jest.fn(),
+    saveTrip: jest.fn(),
+    renderTripCards: jest.fn(),
   };
   
